@@ -1,0 +1,23 @@
+{
+  "name": "chain-scripts",
+  "version": "1.0.0",
+  "description": "chain scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/luchenqun/chain-scripts.git"
+  },
+  "keywords": [
+    "chain",
+    "scripts"
+  ],
+  "author": "Luke",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luchenqun/chain-scripts/issues"
+  },
+  "homepage": "https://github.com/luchenqun/chain-scripts#readme"
+}
