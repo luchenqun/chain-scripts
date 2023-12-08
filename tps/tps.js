@@ -87,12 +87,15 @@ const main = async () => {
 
     if (data.id == TxCountInBlock) {
       const txCount = parseInt(data.result);
-      const resp = await pendTxReq.clone().send();
+      let resp = await pendTxReq.clone().send();
       let pending = parseInt(resp.bodyJson.result.total);
       pending != CACHE_TX && console.log(`Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`);
       // pending too much, sleep
-      if (pending >= CACHE_TX - 100) {
-        await sleep(1000);
+      while (pending >= CACHE_TX - 100) {
+        await sleep(200);
+        resp = await pendTxReq.clone().send();
+        pending = parseInt(resp.bodyJson.result.total);
+        console.log(`Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`);
       }
 
       // send transactions without waiting for receipt
