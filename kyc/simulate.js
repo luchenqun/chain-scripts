@@ -1,13 +1,13 @@
 // Implement the logic you need here
 import { ethers } from "ethers";
+import { ethToBech32 } from "@quarix/address-converter";
 import { App, CosmosTxV1Beta1BroadcastMode } from "@quarix/provider";
-import { createTxMsgGrantPremiumGasWaiver } from "@quarix/transactions";
+import { createTxMsgGrantPremiumGasWaiver, createTx } from "@quarix/transactions";
 import { createBasicGasAllowance } from "@quarix/proto";
 import { Timestamp } from "@bufbuild/protobuf";
+
 import fs from "fs-extra";
 import * as dotenv from "dotenv";
-
-import { createTx, ethToBech32, SignTypeCosmos } from "./utils.js";
 
 export const main = async () => {
   // KycPermissionUseGasWaiver to be used whether users can call contract use gas waiver
@@ -162,7 +162,7 @@ export const main = async () => {
       {
         // use eip712 sign msg
         const context = { chain, sender, fee, memo };
-        const [_, txBytesBase64] = await createTx(createTxMsgGrantPremiumGasWaiver, context, params, privateKey, SignTypeCosmos);
+        const txBytesBase64 = createTx(createTxMsgGrantPremiumGasWaiver, context, params, privateKey);
         const result = await app.tx.broadcastTx({ tx_bytes: txBytesBase64, mode: CosmosTxV1Beta1BroadcastMode.BROADCAST_MODE_BLOCK });
         console.log("grantPremiumGasWaiver success");
         // console.log(JSON.stringify(result, undefined, 2));
