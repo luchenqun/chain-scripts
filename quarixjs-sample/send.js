@@ -3,6 +3,7 @@ import { App, Tendermint, CosmosTxV1Beta1BroadcastMode } from "@quarix/provider"
 import { Wallet } from "ethers";
 import { ethToQuarix } from "@quarix/address-converter";
 import * as dotenv from "dotenv";
+import { calcFeeAmount } from "../utils.js";
 
 const privateKeyToPublicKey = (privateKey, base64Encode = true) => {
   const wallet = new Wallet(privateKey);
@@ -18,7 +19,7 @@ const privateKeyToQuarixAddress = (privateKey) => {
   return ethToQuarix(wallet.address);
 };
 
-(async () => {
+const main = async () => {
   try {
     dotenv.config();
     const { API, RPC, PRIVATE_KEY } = process.env;
@@ -37,16 +38,23 @@ const privateKeyToQuarixAddress = (privateKey) => {
       privateKey = Wallet.fromPhrase(privateKeyOrMnemonic).signingKey.privateKey;
     }
 
+    const app = new App({ baseURL: API });
+    const tdm = new Tendermint({ baseURL: RPC });
+
     let sender = {
       accountAddress: privateKeyToQuarixAddress(privateKey),
       sequence: "0",
       accountNumber: "0",
       pubkey: privateKeyToPublicKey(privateKey),
     };
+    const account = await app.auth.account(sender.accountAddress);
+    sender.sequence = account.account.base_account.sequence;
+    sender.accountNumber = account.account.base_account.account_number;
 
     const gas = "200000";
+    const amount = await calcFeeAmount(app, gas);
     const fee = {
-      amount: undefined,
+      amount,
       denom: "aqare",
       gas,
     };
@@ -59,25 +67,6 @@ const privateKeyToQuarixAddress = (privateKey) => {
       amount: "1",
       denom: "aqrx",
     };
-
-    const app = new App({ baseURL: API });
-    const tdm = new Tendermint({ baseURL: RPC });
-
-    const account = await app.auth.account(sender.accountAddress);
-    sender.sequence = account.account.base_account.sequence;
-    sender.accountNumber = account.account.base_account.account_number;
-
-    // update fee
-    const { base_fee } = await app.feemarket.baseFee();
-    const feemarketParams = await app.feemarket.params();
-    const minGasPrice = feemarketParams.params.min_gas_price;
-    let gasPrice = BigInt(base_fee || 0);
-    // TODO: If the value of minGasPrice exceeds 2^53-1, there will be a overflow problem here
-    const bigMinGasPrice = BigInt(Math.ceil(minGasPrice));
-    if (bigMinGasPrice > gasPrice) {
-      gasPrice = bigMinGasPrice;
-    }
-    fee.amount = (gasPrice * BigInt(gas)).toString();
 
     {
       // use eip712 sign msg
@@ -123,4 +112,6 @@ const privateKeyToQuarixAddress = (privateKey) => {
   } catch (error) {
     console.log("error: ", error);
   }
-})();
+};
+
+main();

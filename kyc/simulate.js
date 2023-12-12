@@ -5,9 +5,9 @@ import { App, CosmosTxV1Beta1BroadcastMode } from "@quarix/provider";
 import { createTxMsgGrantPremiumGasWaiver, createTx } from "@quarix/transactions";
 import { createBasicGasAllowance } from "@quarix/proto";
 import { Timestamp } from "@bufbuild/protobuf";
-
 import fs from "fs-extra";
 import * as dotenv from "dotenv";
+import { calcFeeAmount } from "../utils.js";
 
 export const main = async () => {
   // KycPermissionUseGasWaiver to be used whether users can call contract use gas waiver
@@ -111,6 +111,9 @@ export const main = async () => {
 
     // issuer give gaswaiver to grantee
     {
+      const baseURL = API;
+      const app = new App({ baseURL });
+
       const chain = {
         chainId: 8888888,
         cosmosChainId: "quarix_8888888-1",
@@ -123,10 +126,14 @@ export const main = async () => {
         accountNumber: "0",
         pubkey: Buffer.from(issuerWallet.signingKey.compressedPublicKey.substring(2), "hex").toString("base64"),
       };
+      const account = await app.auth.account(sender.accountAddress);
+      sender.sequence = account.account.base_account.sequence;
+      sender.accountNumber = account.account.base_account.account_number;
 
       const gas = "1000000";
+      const amount = await calcFeeAmount(app, gas);
       let fee = {
-        amount: undefined,
+        amount,
         denom: "aqare",
         gas,
       };
@@ -140,24 +147,6 @@ export const main = async () => {
         account: ethToBech32(granteeWallet.address, PREFIX),
         allowance: createBasicGasAllowance("aqare", "500000000000000000000000", Timestamp.fromDate(new Date("2024-01-01"))),
       };
-
-      const baseURL = API;
-      const app = new App({ baseURL });
-
-      const account = await app.auth.account(sender.accountAddress);
-      sender.sequence = account.account.base_account.sequence;
-      sender.accountNumber = account.account.base_account.account_number;
-
-      const { base_fee } = await app.feemarket.baseFee();
-      const feemarketParams = await app.feemarket.params();
-      const minGasPrice = feemarketParams.params.min_gas_price;
-      let gasPrice = BigInt(base_fee || 0);
-      // TODO: If the value of minGasPrice exceeds 2^53-1, there will be a overflow problem here
-      const bigMinGasPrice = BigInt(parseInt(parseFloat(minGasPrice) + 1));
-      if (bigMinGasPrice > gasPrice) {
-        gasPrice = bigMinGasPrice;
-      }
-      fee.amount = (gasPrice * BigInt(gas)).toString();
 
       {
         // use eip712 sign msg
