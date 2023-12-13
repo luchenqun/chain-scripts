@@ -19,9 +19,9 @@ export const main = async () => {
   // KycPermissionReceiveQvoucherToken to be used whether users can receive qvoucher tokens
   const KycPermissionReceiveQvoucherToken = 8;
   // KycPermissionReceiveQvoucherToken to be used whether users can receive other tokens, for example ibc/atom, erc20/usdt, 2^1 ~ 2^39 for known native tokens
-  const KycPermissionReceiveOtherToken = 1099511627776;
+  const KycPermissionReceiveOtherNativeToken = 1099511627776;
   // KycPermissionAll the kyc issued by quarix has all permissions
-  const KycPermissionAll = KycPermissionUseGasWaiver | KycPermissionReceiveQareToken | KycPermissionReceiveQrxToken | KycPermissionReceiveQvoucherToken | KycPermissionReceiveOtherToken;
+  const KycPermissionAll = KycPermissionUseGasWaiver | KycPermissionReceiveQareToken | KycPermissionReceiveQrxToken | KycPermissionReceiveQvoucherToken | KycPermissionReceiveOtherNativeToken;
 
   try {
     dotenv.config();
@@ -57,6 +57,7 @@ export const main = async () => {
     const factoryServiceProvider = new ethers.ContractFactory(serviceProvider.abi, serviceProvider.bytecode, issuerWallet);
     const contractServiceProvider = await factoryServiceProvider.deploy();
     {
+      console.log("\n");
       // issuer deploy a service provider contract
       // to simplify testing, we only deploy the service provider logic contract, no proxy and proxyAdmin contract
       console.log("deploy service provider contract");
@@ -88,6 +89,7 @@ export const main = async () => {
     const serviceProviderAddress = contractServiceProvider.target;
     const contractServiceWrapper = new ethers.Contract(serviceWrapperAddress, serviceWrapper.abi);
     {
+      console.log("\n");
       // accreditor assign
       console.log("call service provider wrapper function assign");
       tx = await contractServiceWrapper.connect(accreditorWallet).assign(issuerWallet.address, "name", "uri", "email", "description", 4, 1849306088);
@@ -153,7 +155,7 @@ export const main = async () => {
         const context = { chain, sender, fee, memo };
         const txBytesBase64 = createTx(createTxMsgGrantPremiumGasWaiver, context, params, privateKey);
         const result = await app.tx.broadcastTx({ tx_bytes: txBytesBase64, mode: CosmosTxV1Beta1BroadcastMode.BROADCAST_MODE_BLOCK });
-        console.log("grantPremiumGasWaiver success");
+        console.log("\ngrantPremiumGasWaiver success");
         // console.log(JSON.stringify(result, undefined, 2));
       }
     }
@@ -176,8 +178,8 @@ export const main = async () => {
         console.log("grantee call renew success, illustrate grantee can use gaswaiver");
       }
 
-      console.log("after use gaswaiver granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address), ", balance should decrease for grantee use gaswaiver!");
-      console.log("after use gaswaiver grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address));
+      console.log("after  use gaswaiver granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address), ", balance should decrease for grantee use gaswaiver!");
+      console.log("after  use gaswaiver grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address));
     }
 
     {
@@ -193,8 +195,8 @@ export const main = async () => {
         console.log("tranfer should err:", err?.info?.error?.message);
       }
 
-      console.log("after transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
-      console.log("after transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should not crease due to not has kyc!!");
+      console.log("after  transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("after  transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should not crease due to not has kyc!!");
     }
 
     {
@@ -210,8 +212,8 @@ export const main = async () => {
       tx = await issuerWallet.sendTransaction({ to: granteeWallet.address, value: 1 });
       await tx.wait();
 
-      console.log("after transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
-      console.log("after transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should crease 1aqare due to has kyc!");
+      console.log("after  transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("after  transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should crease 1aqare due to has kyc!");
 
       // qoe set set service provider permissions, have KycPermissionUseGasWaiver and KycPermissionReceiveQareToken
       console.log("call service provider wrapper function again setServiceProviderPermissions");
