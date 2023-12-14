@@ -44,6 +44,7 @@ export const main = async () => {
     const granteeWallet = new ethers.Wallet(granteeKey, provider);
     const accreditorWallet = new ethers.Wallet(accreditorKey, provider);
     const issuerWallet = new ethers.Wallet(issuerKey, provider);
+    const normalWallet = issuerWallet;
 
     let tx;
     {
@@ -185,17 +186,17 @@ export const main = async () => {
     {
       console.log("\n");
       // grentee can not receive native token
-      console.log("before transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("before transfer granter ", normalWallet.address, " have balance ", await provider.getBalance(normalWallet.address));
       console.log("before transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address));
 
       try {
-        tx = await issuerWallet.sendTransaction({ to: granteeWallet.address, value: 1 });
+        tx = await normalWallet.sendTransaction({ to: granteeWallet.address, value: 1 });
         await tx.wait();
       } catch (err) {
         console.log("tranfer should err:", err?.info?.error?.message);
       }
 
-      console.log("after  transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("after  transfer granter ", normalWallet.address, " have balance ", await provider.getBalance(normalWallet.address));
       console.log("after  transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should not crease due to not has kyc!!");
     }
 
@@ -206,13 +207,13 @@ export const main = async () => {
       tx = await contractServiceWrapper.connect(qoeWallet).setServiceProviderPermissions(serviceProviderAddress, KycPermissionUseGasWaiver | KycPermissionReceiveQareToken);
       await tx.wait();
       // grentee can not receive native token
-      console.log("before transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("before transfer granter ", normalWallet.address, " have balance ", await provider.getBalance(normalWallet.address));
       console.log("before transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address));
 
-      tx = await issuerWallet.sendTransaction({ to: granteeWallet.address, value: 1 });
+      tx = await normalWallet.sendTransaction({ to: granteeWallet.address, value: 1 });
       await tx.wait();
 
-      console.log("after  transfer granter ", issuerWallet.address, " have balance ", await provider.getBalance(issuerWallet.address));
+      console.log("after  transfer granter ", normalWallet.address, " have balance ", await provider.getBalance(normalWallet.address));
       console.log("after  transfer grantee ", granteeWallet.address, " have balance ", await provider.getBalance(granteeWallet.address), ", balance should crease 1aqare due to has kyc!");
 
       // qoe set set service provider permissions, have KycPermissionUseGasWaiver and KycPermissionReceiveQareToken
