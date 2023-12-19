@@ -1,6 +1,7 @@
 import { Wallet, JsonRpcProvider, FetchRequest } from "ethers";
 import WebSocket from "ws";
 import * as dotenv from "dotenv";
+import * as fs from "fs/promises";
 
 const sleep = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -8,7 +9,14 @@ const sleep = (time) => {
 
 const main = async () => {
   dotenv.config();
-  const { WS, PROVIDER, RPC, PRIVATE_KEY, TO, TEST_TIME, CACHE_TX } = process.env;
+  const { WS, PROVIDER, RPC, PRIVATE_KEY, TO, TEST_TIME, CACHE_TX } =
+    process.env;
+
+  const filename = `./tps-${new Date().toISOString()}-${TEST_TIME}s-batch_${CACHE_TX}tx.csv`;
+  await fs.appendFile(
+    filename,
+    "Total Send, Send Reply, Cached Txs, Tx Reply, Spend, Reply TPS, TPS\n"
+  );
 
   const provider = new JsonRpcProvider(PROVIDER);
   const wallet = new Wallet(PRIVATE_KEY, provider);
@@ -89,13 +97,18 @@ const main = async () => {
       const txCount = parseInt(data.result);
       let resp = await pendTxReq.clone().send();
       let pending = parseInt(resp.bodyJson.result.total);
-      pending != CACHE_TX && console.log(`Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`);
+      pending != CACHE_TX &&
+        console.log(
+          `Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`
+        );
       // pending too much, sleep
       while (pending >= CACHE_TX - 100) {
         await sleep(200);
         resp = await pendTxReq.clone().send();
         pending = parseInt(resp.bodyJson.result.total);
-        console.log(`Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`);
+        console.log(
+          `Unconfirmed Txs ${pending}, latest block contain ${txCount} tx`
+        );
       }
 
       // send transactions without waiting for receipt
@@ -127,8 +140,17 @@ const main = async () => {
       const count = nonce - startNonce;
       const tps = parseInt(count / gapTime);
       const replyTps = parseInt(reply / gapTime);
-      console.log(`Total Send ${totalSend}, Send Reply ${reply}, Cached Txs ${totalSend - reply}, Tx Reply ${count}, Spend ${gapTime}s, Reply TPS ${replyTps}, TPS ${tps}`);
-
+      console.log(
+        `Total Send ${totalSend}, Send Reply ${reply}, Cached Txs ${
+          totalSend - reply
+        }, Tx Reply ${count}, Spend ${gapTime}s, Reply TPS ${replyTps}, TPS ${tps}`
+      );
+      await fs.appendFile(
+        filename,
+        `${totalSend}, ${reply}, ${
+          totalSend - reply
+        }, ${count}, ${gapTime}, ${replyTps}, ${tps}\n`
+      );
       // The stress test has been run for the specified time and the process ends.
       if (endTime - startTime > TEST_TIME) {
         ws.close();
