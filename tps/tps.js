@@ -1,6 +1,7 @@
 import { Wallet, JsonRpcProvider, FetchRequest } from 'ethers';
 import WebSocket from 'ws';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs/promises';
 
 const sleep = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -9,6 +10,9 @@ const sleep = (time) => {
 const main = async () => {
   dotenv.config();
   const { WS, PROVIDER, RPC, PRIVATE_KEY, TO, TEST_TIME, CACHE_TX } = process.env;
+
+  const filename = `./tps-${new Date().toISOString()}-${TEST_TIME}s-batch_${CACHE_TX}tx.csv`;
+  await fs.appendFile(filename, 'Total Send, Send Reply, Cached Txs, Tx Reply, Spend, Reply TPS, TPS\n');
 
   const provider = new JsonRpcProvider(PROVIDER);
   const wallet = new Wallet(PRIVATE_KEY, provider);
@@ -128,7 +132,7 @@ const main = async () => {
       const tps = parseInt(count / gapTime);
       const replyTps = parseInt(reply / gapTime);
       console.log(`Total Send ${totalSend}, Send Reply ${reply}, Cached Txs ${totalSend - reply}, Tx Reply ${count}, Spend ${gapTime}s, Reply TPS ${replyTps}, TPS ${tps}`);
-
+      await fs.appendFile(filename, `${totalSend}, ${reply}, ${totalSend - reply}, ${count}, ${gapTime}, ${replyTps}, ${tps}\n`);
       // The stress test has been run for the specified time and the process ends.
       if (endTime - startTime > TEST_TIME) {
         ws.close();
