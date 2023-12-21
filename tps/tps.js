@@ -1,6 +1,6 @@
-import { Wallet, JsonRpcProvider, FetchRequest } from "ethers";
-import WebSocket from "ws";
-import * as dotenv from "dotenv";
+import { Wallet, JsonRpcProvider, FetchRequest } from 'ethers';
+import WebSocket from 'ws';
+import * as dotenv from 'dotenv';
 
 const sleep = (time) => {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -20,17 +20,17 @@ const main = async () => {
   const TxId = 1;
 
   let txCount = {
-    method: "eth_getBlockTransactionCountByNumber",
-    jsonrpc: "2.0",
+    method: 'eth_getBlockTransactionCountByNumber',
+    jsonrpc: '2.0',
     id: TxCountInBlock,
-    params: ["latest"],
+    params: ['latest']
   };
 
   let txRaw = {
-    method: "eth_sendRawTransaction",
-    jsonrpc: "2.0",
+    method: 'eth_sendRawTransaction',
+    jsonrpc: '2.0',
     id: TxId,
-    params: [],
+    params: []
   };
 
   const txCountStr = JSON.stringify(txCount);
@@ -42,8 +42,8 @@ const main = async () => {
   let totalSend = 0;
   let errorCount = 0;
 
-  ws.on("open", async () => {
-    console.log("connected");
+  ws.on('open', async () => {
+    console.log('connected');
     // It cannot be request from outside, otherwise ws cannot be opened.
     feeData = await provider.getFeeData();
     network = await provider.getNetwork();
@@ -53,12 +53,12 @@ const main = async () => {
     ws.send(txCountStr);
   });
 
-  ws.on("close", function close() {
-    console.log("disconnected");
+  ws.on('close', function close() {
+    console.log('disconnected');
     process.exit(0);
   });
 
-  ws.on("message", async (data) => {
+  ws.on('message', async (data) => {
     data = JSON.parse(data.toString());
     if (data.error) {
       console.log(data.error);
@@ -110,7 +110,7 @@ const main = async () => {
           to: TO,
           value: 1,
           chainId: network.chainId,
-          nonce: sendNonce,
+          nonce: sendNonce
         };
         const signedTx = await wallet.signTransaction(txRequest);
         txRaw.params[0] = signedTx;

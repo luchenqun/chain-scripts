@@ -1,0 +1,18 @@
+{
+  "name": "recover-cosmos-tx-address",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cosmjs/crypto": "^0.32.2",
+    "@cosmjs/encoding": "^0.32.1",
+    "@cosmjs/proto-signing": "^0.32.1",
+    "ethers": "^6.9.1"
+  }
+}
