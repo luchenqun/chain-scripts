@@ -92,11 +92,10 @@ const privateKeyToQuarixAddress = (privateKey) => {
       }
     };
 
-    const signTypes = [SignType.Cosmos, SignType.EIP712];
-
     const contract = '0x1111111111111111111111111111111111120006';
     const grantee = 'quarix1hajh6rhhkjqkwet6wqld3lgx8ur4y3khmpfhlu';
 
+    const signTypes = [SignType.Cosmos, SignType.EIP712];
     for (const signType of signTypes) {
       {
         // apply gas waiver granter
