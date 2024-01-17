@@ -94,13 +94,16 @@ const privateKeyToQuarixAddress = (privateKey) => {
 
     const signTypes = [SignType.Cosmos, SignType.EIP712];
 
+    const contract = '0x1111111111111111111111111111111111120006';
+    const grantee = 'quarix1hajh6rhhkjqkwet6wqld3lgx8ur4y3khmpfhlu';
+
     for (const signType of signTypes) {
       {
         // apply gas waiver granter
         {
           const params = {
             expiration: '2025-12-01T00:12:59',
-            contract: '0x1111111111111111111111111111111111120006',
+            contract,
             allowance: periodAllowance,
             applyPeriod: 3600
           };
@@ -111,14 +114,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // cancel gas waiver granter application
         {
           const params = {
             applicant: 'quarix1qqqqhe5pnaq5qq39wqkn957aydnrm45sywg476',
-            contract: '0x1111111111111111111111111111111111120006'
+            contract
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgCancelApplication, context, params, privateKey, signType);
@@ -127,14 +130,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // apply gas waiver granter
         {
           const params = {
             expiration: '2025-12-01T00:12:59',
-            contract: '0x1111111111111111111111111111111111120006',
+            contract,
             allowance: basicAllowance,
             applyPeriod: 3600
           };
@@ -145,14 +148,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // approve gas waiver granter application
         {
           const params = {
             granter: 'quarix1qqqqhe5pnaq5qq39wqkn957aydnrm45sywg476',
-            contract: '0x1111111111111111111111111111111111120006'
+            contract
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgApproveApplication, context, params, privateKey, signType);
@@ -161,13 +164,13 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // revoke gas waiver granter
         {
           const params = {
-            contract: '0x1111111111111111111111111111111111120006'
+            contract
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgRevokeGasWaiverGranter, context, params, privateKey);
@@ -176,14 +179,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // grant gas waiver ganter
         {
           const params = {
             expiration: '2025-12-01',
-            contract: '0x1111111111111111111111111111111111120006',
+            contract,
             allowance: periodAllowance
           };
           const context = { chain, sender, fee, memo };
@@ -193,13 +196,13 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // revoke gas waiver granter
         {
           const params = {
-            contract: '0x1111111111111111111111111111111111120006'
+            contract
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgRevokeGasWaiverGranter, context, params, privateKey);
@@ -208,14 +211,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // grant gas waiver ganter
         {
           const params = {
             expiration: '2025-12-01',
-            contract: '0x1111111111111111111111111111111111120006',
+            contract,
             allowance: periodAllowance
           };
           const context = { chain, sender, fee, memo };
@@ -225,14 +228,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // grant premium gas waiver
         {
           const params = {
-            contract: '0x1111111111111111111111111111111111120006',
-            grantee: 'quarix1qqqqhe5pnaq5qq39wqkn957aydnrm45sywg476',
+            contract,
+            grantee,
             allowance: periodAllowance
           };
           const context = { chain, sender, fee, memo };
@@ -242,14 +245,14 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         //revoke premium gas waiver
         {
           const params = {
-            contract: '0x1111111111111111111111111111111111120006',
-            grantee: 'quarix1qqqqhe5pnaq5qq39wqkn957aydnrm45sywg476'
+            contract,
+            grantee
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgRevokePremiumGasWaiver, context, params, privateKey);
@@ -258,13 +261,13 @@ const privateKeyToQuarixAddress = (privateKey) => {
           console.log(
             `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
           );
+          sender.sequence = String(parseInt(sender.sequence) + 1);
         }
-        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         // revoke gas waiver granter
         {
           const params = {
-            contract: '0x1111111111111111111111111111111111120006'
+            contract
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgRevokeGasWaiverGranter, context, params, privateKey);
@@ -275,8 +278,6 @@ const privateKeyToQuarixAddress = (privateKey) => {
           );
         }
         sender.sequence = String(parseInt(sender.sequence) + 1);
-
-        //...
       }
     }
   } catch (error) {
