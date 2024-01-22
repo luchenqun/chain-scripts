@@ -7,7 +7,8 @@ import {
   createTxMsgRevokeGasWaiverGranter,
   createTxMsgGrantGasWaiverGranter,
   createTxMsgGrantPremiumGasWaiver,
-  createTxMsgRevokePremiumGasWaiver
+  createTxMsgRevokePremiumGasWaiver,
+  createTxMsgUpdateAllowance
 } from '@quarix/transactions';
 
 import { App, CosmosTxV1Beta1BroadcastMode } from '@quarix/provider';
@@ -74,7 +75,7 @@ const privateKeyToQuarixAddress = (privateKey) => {
     const basicAllowance = {
       spendLimit: {
         denom: 'aqare',
-        amount: '50000000'
+        amount: '80000000000000000000000000000'
       }
     };
 
@@ -198,6 +199,22 @@ const privateKeyToQuarixAddress = (privateKey) => {
           sender.sequence = String(parseInt(sender.sequence) + 1);
         }
 
+        // update normal allowance
+        {
+          const params = {
+            contract,
+            allowance: basicAllowance,
+          }
+          const context = { chain, sender, fee, memo };
+          const txBytesBase64 = createTx(createTxMsgUpdateAllowance, context, params, privateKey);
+          const result = await app.tx.broadcastTx({ tx_bytes: txBytesBase64, mode: CosmosTxV1Beta1BroadcastMode.BROADCAST_MODE_BLOCK });
+          console.log(`============================ ${signType === SignType.EIP712 ? 'eip712' : 'cosmos'} createTxMsgUpdateAllowance result ============================ `);
+          console.log(
+            `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
+          );
+        }
+        sender.sequence = String(parseInt(sender.sequence) + 1);
+
         // revoke gas waiver granter
         {
           const params = {
@@ -235,7 +252,7 @@ const privateKeyToQuarixAddress = (privateKey) => {
           const params = {
             contract,
             grantee,
-            allowance: periodAllowance
+            allowance: basicAllowance,
           };
           const context = { chain, sender, fee, memo };
           const txBytesBase64 = createTx(createTxMsgGrantPremiumGasWaiver, context, params, privateKey);
@@ -246,6 +263,23 @@ const privateKeyToQuarixAddress = (privateKey) => {
           );
           sender.sequence = String(parseInt(sender.sequence) + 1);
         }
+
+        // update premium allowance
+        {
+          const params = {
+            contract,
+            grantee,
+            allowance: periodAllowance,
+          }
+          const context = { chain, sender, fee, memo };
+          const txBytesBase64 = createTx(createTxMsgUpdateAllowance, context, params, privateKey);
+          const result = await app.tx.broadcastTx({ tx_bytes: txBytesBase64, mode: CosmosTxV1Beta1BroadcastMode.BROADCAST_MODE_BLOCK });
+          console.log(`============================ ${signType === SignType.EIP712 ? 'eip712' : 'cosmos'} createTxMsgUpdateAllowance premium result ============================ `);
+          console.log(
+            `code: ${result?.tx_response?.code}, block height: ${result?.tx_response?.height}, txhash: ${result?.tx_response?.txhash}, log: ${result?.tx_response?.raw_log}`
+          );
+        }
+        sender.sequence = String(parseInt(sender.sequence) + 1);
 
         //revoke premium gas waiver
         {
