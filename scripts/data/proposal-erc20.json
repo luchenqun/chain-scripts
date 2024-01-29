@@ -1,0 +1,21 @@
+{
+  "metadata": [
+    {
+      "description": "The native staking and governance token of the quarix chain",
+      "denom_units": [
+        {
+          "denom": "aqrx",
+          "exponent": 0
+        },
+        {
+          "denom": "qrx",
+          "exponent": 18
+        }
+      ],
+      "base": "aqrx",
+      "display": "qrx",
+      "name": "qrx",
+      "symbol": "qrx"
+    }
+  ]
+}
