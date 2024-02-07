@@ -1,0 +1,21 @@
+{
+  "title": "Test Proposal Param Change",
+  "description": "Param Change MinGasPrice",
+  "messages": [
+    {
+      "@type": "/ethermint.feemarket.v1.MsgUpdateParams",
+      "authority": "ethos10d07y265gmmuvt4z0w9aw880jnsr700j78lu59",
+      "params": {
+        "no_base_fee": false,
+        "base_fee_change_denominator": 8,
+        "elasticity_multiplier": 2,
+        "enable_height": "0",
+        "base_fee": "10000000000",
+        "min_gas_price": "20000000000.000000000000000000",
+        "min_gas_multiplier": "0.000100000000000000"
+      }
+    }
+  ],
+  "metadata": "AQ==",
+  "deposit": "10000000aqrx"
+}
