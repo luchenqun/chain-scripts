@@ -47,6 +47,7 @@ const main = async () => {
     const simple = await fs.readJSON(path.join('..', 'data/Simple.json'));
     const granterWallet = new ethers.Wallet(GRANTER_PRIVATE_KEY, provider);
     const granteeWallet = new ethers.Wallet(GRANTEE_PRIVATE_KEY, provider);
+    const noExistWallet = new ethers.Wallet('b5383875512d64281acfb81cc37a95b0ddc00b235a3aa60cf8b4be25a3ba8fe5', provider); // 0xfffff01adb78f8951aa28cf06ceb9b8898a29f50
     const GasLimit = BigInt('30000'); // call simple contract gas limit
     const GasPrice = BigInt('1000000000'); // call simple contract gas price
     const option = { gasLimit: GasLimit, gasPrice: GasPrice };
@@ -146,6 +147,16 @@ const main = async () => {
       receipt = await tx.wait();
       console.log('after  use gaswaiver granter ', granterWallet.address, ' have balance ', await provider.getBalance(granterWallet.address));
       console.log('after  use gaswaiver grantee ', granteeWallet.address, ' have balance ', await provider.getBalance(granteeWallet.address));
+
+      console.log('\n');
+      console.log('grantee account does not exist on the chain use gaswaiver call contract (make sure this grantee has gaswaiver kyc)');
+      console.log('before use gaswaiver granter ', granterWallet.address, ' have balance ', await provider.getBalance(granterWallet.address));
+      console.log('before use gaswaiver grantee ', noExistWallet.address, ' have balance ', await provider.getBalance(noExistWallet.address));
+      contractSimple = new ethers.Contract(contractSimple.target, simple.abi, noExistWallet);
+      tx = await contractSimple.set(555555, option);
+      receipt = await tx.wait();
+      console.log('after  use gaswaiver granter ', granterWallet.address, ' have balance ', await provider.getBalance(granterWallet.address));
+      console.log('after  use gaswaiver grantee ', noExistWallet.address, ' have balance ', await provider.getBalance(noExistWallet.address));
     }
   } catch (error) {
     console.log('error: ', error);
