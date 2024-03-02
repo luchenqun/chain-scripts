@@ -157,6 +157,10 @@ const main = async () => {
       receipt = await tx.wait();
       console.log('after  use gaswaiver granter ', granterWallet.address, ' have balance ', await provider.getBalance(granterWallet.address));
       console.log('after  use gaswaiver grantee ', noExistWallet.address, ' have balance ', await provider.getBalance(noExistWallet.address));
+
+      console.log('\n');
+      console.log('grantee gaswaiver quota is used up and their own funds are insufficient the transaction will fail. (make sure this grantee has gaswaiver kyc)');
+      tx = await contractSimple.set(999999, option);
     }
   } catch (error) {
     console.log('error: ', error);
