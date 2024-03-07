@@ -11,6 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^16.3.1",
-    "quarixjs": "^0.3.34"
+    "quarixjs": "^0.3.35"
   }
 }
