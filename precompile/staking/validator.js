@@ -8,7 +8,7 @@ export const main = async () => {
   const provider = new ethers.JsonRpcProvider(rpc);
 
   // input params
-  const validatorAddress = '0x03E335b02C906643b5f3D864F5A97e5322098585';
+  const validatorAddress = '0xA3b6E7aA04962778232b70CCFF55b71B11228b9b';
 
   const staking = new ethers.Contract(stakingAddress, abi, provider);
   const validator = await staking.validator(validatorAddress);
