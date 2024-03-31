@@ -1,10 +1,8 @@
 import { ethers } from 'ethers';
-import fs from 'fs-extra';
-import path from 'path';
 
 export const main = async () => {
   try {
-    const { rpc } = await fs.readJSON('./cfg.json');
+    const rpc = 'http://127.0.0.1:8545';
     const abi = [
       {
         inputs: [
